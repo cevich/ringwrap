@@ -1,0 +1,11 @@
+Building dependencies for ringwrap.d
+Building dependencies for utility.d
+Building dependencies for ring.d
+Building dependencies for options.d
+Building dependencies for version.d
+gcc  -D__USE_FIXED_PROTOTYPES__ -Wall -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE -g -E   -c -o ringwrap.o ringwrap.c
+gcc  -D__USE_FIXED_PROTOTYPES__ -Wall -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE -g -E   -c -o utility.o utility.c
+gcc  -D__USE_FIXED_PROTOTYPES__ -Wall -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE -g -E   -c -o version.o version.c
+gcc  -D__USE_FIXED_PROTOTYPES__ -Wall -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE -g -E   -c -o options.o options.c
+gcc  -D__USE_FIXED_PROTOTYPES__ -Wall -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_GNU_SOURCE -g -E   -c -o ring.o ring.c
+gcc  -shared-libgcc  ringwrap.o utility.o version.o options.o ring.o  -lrt  -o ringwrap

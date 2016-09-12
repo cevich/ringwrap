@@ -1,0 +1,1 @@
+ringwrap: ringwrap.o utility.o version.o options.o ring.o

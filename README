@@ -1,0 +1,88 @@
+#
+# Copyright (C) 2010 by Chris Evich <cevich@redhat.com>
+#
+#   This library is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Lesser General Public
+#   License as published by the Free Software Foundation; either
+#   version 2.1 of the License, or (at your option) any later version.
+#
+#   This library is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Lesser General Public License for more details.
+#
+#   You should have received a copy of the GNU Lesser General Public
+#   License along with this library; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+
+/**************************************************
+********************* QUICK DEMO ******************
+**************************************************/
+
+./ringwrap "df -h > /dev/null" --init
+./ringwrap "df -h > /dev/null" --begin
+./ringwrap "df -h > /dev/null" # repeat as many times as you like
+./ringwrap "df -h > /dev/null" --end
+# examine /tmp/ringwrap-strace/ contains only last 10 runs
+./ringwrap "df -h > /dev/null" --fini
+
+/**************************************************
+********************* COMPLEX DEMO ****************
+**************************************************/
+
+./ringwrap -w "strace -o @@@" -k 10 -o /tmp/diskprob "df -h > /dev/null" -i
+./ringwrap "df -h > /dev/null" -b
+./ringwrap "df -h > /dev/null" # repeat as many times as you like
+./ringwrap "df -h > /dev/null" -e
+# Examine /tmp/diskprob, contains only final 10 straces of "df -h > /dev/null"
+./ringwrap "df -h > /dev/null" -s # usage statistics
+./ringwrap "df -h > /dev/null" -f
+
+/**************************************************
+********************* DETAILS *********************
+**************************************************/
+
+This program allows an arbitrary wrapper command to be 
+asynchronously enabled and disabled around an arbitrary 
+primary command.  Once activated, the program will begin 
+executing the wrapper command with the primary as it's 
+final argument.
+
+The intended use is, modifying the behavior of the primary 
+command, from outside of it's execution context.  Enabling,
+or disabling the wrapping at will, and gathering execution
+statistics.
+
+For example, consider a network service that forks a new 
+server for each connection.  You can drop in ringwrap 
+as the "server" in the configuration once, only to initialize 
+and/or run limited straces or logging on it later w/o 
+having to restart or interrupt the service. 
+
+The --keep and --outdir options enhance the functionality 
+by generating a unique output directory and filename for 
+each run, then purging all but the most recent.  The 
+filename is passed via the magic sequence "@@@" in the
+wrapped command.
+
+The filename will be in the form:
+
+<outdir>/YYYY-MM-DD_HH:MM:SS_PID/<command>
+
+The magic squence is not yet supported for use in the primary
+command.
+
+If multiple instances of the same command will be wrapped with
+differing output options, the --unique option may be used to
+distinguish them.
+
+Shared memory segments and semaphores are used to serialize
+access to wrapping state as well as output.  This is intended
+for cases where hundreds or thousands of wrapped commands
+may be executing at the same time.  
+
+Report bugs to Chris Evich <cevich@redhat.com>.
+
+
+
